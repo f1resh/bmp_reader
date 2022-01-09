@@ -86,7 +86,7 @@ struct BMP {
 				whiteMask = 0xFFFFFFFF;
 				break;
 			default:
-				throw runtime_error("Error! 24 and 32 bits are not supported!");
+				throw runtime_error("Error! Only 24 and 32 bits are supported!");
 			}
 
 			for (size_t i = 0; i < dib_header.width * dib_header.height; i++) {
