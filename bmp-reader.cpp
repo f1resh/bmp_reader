@@ -72,22 +72,27 @@ struct BMP {
 			// Jump to pixel data location
 			fin.seekg(file_header.offset, fin.beg);
 
+			int bBit;
+			uint32_t whiteMask;
+
+			// Only for 24,32 bits
+			switch (dib_header.bit_count) {
+			case 24:
+				bBit = 3;
+				whiteMask = 0x00FFFFFF;
+				break;
+			case 32:
+				bBit = 4;
+				whiteMask = 0xFFFFFFFF;
+				break;
+			default:
+				throw runtime_error("Error! 24 and 32 bits are not supported!");
+			}
+
 			for (size_t i = 0; i < dib_header.width * dib_header.height; i++) {
 				uint32_t pixel{0};
-				
-				switch (dib_header.bit_count) {
-					case 24:
-						fin.read((char*)&pixel, 3);
-						data[i] = pixel == 0x00FFFFFF ? 0 : 1;
-						break;
-					case 32:
-						fin.read((char*)&pixel, 4);
-						data[i] = pixel == 0xFFFFFFFF ? 0 : 1;
-						break;
-					default:
-						break;
-				}
-				
+				fin.read((char*)&pixel, bBit);
+				data[i] = pixel == whiteMask ? 0 : 1;
 			}
 
 		}
